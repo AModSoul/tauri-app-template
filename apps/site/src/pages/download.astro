@@ -1,0 +1,19 @@
+---
+// The latest release, asked of GitHub as the site is built, so the page shows its downloads at
+// once; the island asks again in the browser. A build that can't reach GitHub still succeeds.
+// CI passes GITHUB_TOKEN for a higher rate limit.
+import { fetchLatestRelease } from "@/downloads/github";
+import { Downloads } from "@/islands";
+import Page from "@/layouts/Page.astro";
+
+const built = await fetchLatestRelease({ token: process.env.GITHUB_TOKEN }).catch(
+  (error: unknown) => {
+    console.warn(`Building the download page without a release: ${String(error)}`);
+    return null;
+  },
+);
+---
+
+<Page title="Download" current="/download">
+  <Downloads client:load built={built} />
+</Page>

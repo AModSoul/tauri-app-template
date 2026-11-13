@@ -14,3 +14,13 @@ export const APP_NAME = "My App";
 
 export const DESCRIPTION =
   "My App turns a list of names into safe file names, on Windows, macOS and Linux, as a desktop app and a command line tool.";
+
+/** The site's pages, as its navigation lists them. */
+export const PAGES = [
+  { path: "/", label: "Home" },
+  // site:download:start
+  { path: "/download", label: "Download" },
+  // site:download:end
+] as const;
+
+export type SitePath = (typeof PAGES)[number]["path"];

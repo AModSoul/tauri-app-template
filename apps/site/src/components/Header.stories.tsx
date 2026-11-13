@@ -5,6 +5,7 @@ import { Header } from "./Header";
 
 const meta = {
   component: Header,
+  args: { current: "/" },
 } satisfies Meta<typeof Header>;
 
 export default meta;

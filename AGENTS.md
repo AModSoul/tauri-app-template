@@ -50,9 +50,13 @@ drive it.<!-- site:start --> A marketing site sits beside them.<!-- site:end -->
   preview every app uses. Source only, no build step: import `@my-app/ui/<snippet>`,
   `@my-app/ui/theme`.
   <!-- site:start -->
-- `apps/site` (package `site`): the marketing site, on Cloudflare Workers: Vite, TanStack
-  Router, and `vite-prerender-plugin`, which renders every page to static HTML after the build,
-  `404.html` included. Where it lives and links to is all in `src/site-config.ts`.
+- `apps/site` (package `site`): the marketing site, built with Astro and served by a Cloudflare
+  Worker. Its pages are `src/pages/*.astro`, every one built to static HTML (`404.html`
+  included); their content is React and Chakra from `src/components`, used through
+  `src/islands.tsx`, which gives each the shared provider. A component sends no JavaScript
+  unless a page marks it `client:load`, making it an island; keep islands to what must run in
+  the browser (the header's colour mode button, the download panel). Where the site lives and
+  links to is all in `src/site-config.ts`.
   - `wrangler.jsonc`: the Worker. It serves `dist` as static assets, and runs
     `worker/index.ts` first only for the paths in `run_worker_first` (`/api/*`).
   - `worker/`: the Worker's code, on Cloudflare's runtime (no DOM, no Node), with its own
@@ -235,8 +239,7 @@ while it runs. Shared preview setup (theme switcher, Chakra provider, toaster, a
 - Add a `play` function that checks the behaviour a story is about, with role- or label-based
   queries. Chakra overlays (drawers, tooltips, toasts) render in a portal: query them with
   `screen`, not `canvas`, and `waitFor` them to finish animating in.
-- Don't wrap stories in a provider or add a `<Toaster />`; `.storybook/preview.tsx` does<!-- site:start -->,
-  and the site's also puts every story inside a router so router links work<!-- site:end -->. Don't
+- Don't wrap stories in a provider or add a `<Toaster />`; `.storybook/preview.tsx` does. Don't
   add `tags: ["autodocs"]` or a `title`; titles come from the file path.
 - **There is no Tauri in Storybook.** The desktop preview mocks `src/api.ts`, `src/appWindow.ts`
   and every `@tauri-apps/*` module the app imports with `sb.mock`, and gives each a default

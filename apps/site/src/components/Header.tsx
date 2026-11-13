@@ -1,16 +1,18 @@
 import { Box, Container, HStack, IconButton, Image, Link } from "@chakra-ui/react";
-import { ColorModeButton } from "@my-app/ui/color-mode";
-import { Link as RouterLink } from "@tanstack/react-router";
 import { LuGithub } from "react-icons/lu";
 
-import { APP_NAME, GITHUB_REPO_URL } from "@/site-config";
+import { ColorModeButton } from "@my-app/ui/color-mode";
 
-const NAV = [
-  { to: "/", label: "Home" },
-  { to: "/download", label: "Download" },
-] as const;
+import { APP_NAME, GITHUB_REPO_URL, PAGES, type SitePath } from "@/site-config";
 
-export function Header() {
+export interface HeaderProps {
+  /** The page it's on, which the navigation marks. */
+  current?: SitePath;
+}
+
+/** The site's header: its name, its pages, and the colour mode. An island on every page, for the
+ * colour mode button. */
+export function Header({ current }: HeaderProps) {
   return (
     <Box
       as="header"
@@ -23,32 +25,25 @@ export function Header() {
     >
       <Container maxW="6xl" py={3}>
         <HStack justify="space-between" gap={4}>
-          <Link asChild fontWeight="semibold" color="fg" textDecoration="none" gap={2}>
-            <RouterLink to="/">
-              {/* The app's icon at 256px, sharp at this size on any screen. */}
-              <Image src={`${import.meta.env.BASE_URL}apple-touch-icon.png`} alt="" boxSize={7} />
-              <Box as="span" display={{ base: "none", sm: "inline" }}>
-                {APP_NAME}
-              </Box>
-            </RouterLink>
+          <Link href="/" fontWeight="semibold" color="fg" textDecoration="none" gap={2}>
+            {/* The app's icon at 256px, sharp at this size on any screen. */}
+            <Image src="/apple-touch-icon.png" alt="" boxSize={7} />
+            <Box as="span" display={{ base: "none", sm: "inline" }}>
+              {APP_NAME}
+            </Box>
           </Link>
 
           <HStack as="nav" aria-label="Main" gap={{ base: 3, sm: 5 }} fontSize="sm">
-            {NAV.map(({ to, label }) => (
+            {PAGES.map(({ path, label }) => (
               <Link
-                key={to}
-                asChild
+                key={path}
+                href={path}
+                aria-current={path === current ? "page" : undefined}
                 color="fg.muted"
                 _hover={{ color: "fg" }}
                 _currentPage={{ fontWeight: "semibold" }}
               >
-                <RouterLink
-                  to={to}
-                  activeOptions={{ exact: true }}
-                  activeProps={{ "aria-current": "page" }}
-                >
-                  {label}
-                </RouterLink>
+                {label}
               </Link>
             ))}
             <HStack gap={1}>

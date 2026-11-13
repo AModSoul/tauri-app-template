@@ -5,10 +5,10 @@
   "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter @my-app/ui typegen && vite dev --port 3000",
-    "build": "pnpm --filter @my-app/ui typegen && vite build && pnpm run typecheck:worker && tsc --noEmit",
+    "dev": "pnpm --filter @my-app/ui typegen && astro dev --port 3000",
+    "build": "pnpm run typecheck && astro build",
     "preview": "pnpm run build && wrangler dev --port 3000",
-    "typecheck": "pnpm --filter @my-app/ui typegen && tsc --noEmit && pnpm run typecheck:worker",
+    "typecheck": "pnpm --filter @my-app/ui typegen && astro check && pnpm run typecheck:worker",
     "typecheck:worker": "wrangler types && tsc --noEmit -p worker",
     "cf-typegen": "wrangler types",
     "test": "vitest run",
@@ -18,24 +18,25 @@
     "deploy": "pnpm run build && wrangler deploy"
   },
   "dependencies": {
+    "@astrojs/react": "7.1.2",
+    "@astrojs/sitemap": "3.7.4",
     "@chakra-ui/react": "catalog:",
     "@emotion/react": "catalog:",
     "@my-app/ui": "workspace:*",
-    "@tanstack/react-router": "^1.170.15",
+    "astro": "7.4.4",
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-icons": "catalog:"
   },
   "devDependencies": {
-    "@emotion/cache": "^11.14.0",
+    "@astrojs/check": "0.9.12",
     "@storybook/addon-a11y": "catalog:",
     "@storybook/addon-docs": "catalog:",
     "@storybook/addon-mcp": "catalog:",
     "@storybook/addon-themes": "catalog:",
     "@storybook/addon-vitest": "catalog:",
     "@storybook/react-vite": "catalog:",
-    "@tanstack/router-plugin": "^1.168.18",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
@@ -45,7 +46,6 @@
     "storybook": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-prerender-plugin": "^0.5.13",
     "vitest": "catalog:",
     "wrangler": "^4.156.0"
   }

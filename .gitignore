@@ -20,3 +20,5 @@ storybook-static
 apps/site/worker-configuration.d.ts
 # Wrangler's local state
 .wrangler/
+# Astro's generated types (astro check, dev and build)
+.astro/

@@ -1,0 +1,58 @@
+---
+// Every page's frame: its <head> (title, description, social cards, icons) and the header and
+// footer around its content.
+import { Footer, Header } from "@/islands";
+import { APP_NAME, DESCRIPTION, SITE_URL, type SitePath } from "@/site-config";
+
+interface Props {
+  /** The page's own title, before the site's name; the site's name alone when there's none. */
+  title?: string;
+  description?: string;
+  /** The page, for the navigation to mark. */
+  current?: SitePath;
+}
+
+const { title, description = DESCRIPTION, current } = Astro.props;
+const fullTitle = title ? `${title} · ${APP_NAME}` : APP_NAME;
+const canonical = new URL(Astro.url.pathname, SITE_URL).href;
+const image = new URL("icon-512.png", SITE_URL).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={APP_NAME} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary" />
+  </head>
+  <body>
+    <div class="page">
+      <Header client:load current={current} />
+      <main><slot /></main>
+      <Footer />
+    </div>
+  </body>
+</html>
+
+<style>
+  .page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+  main {
+    flex: 1;
+  }
+</style>

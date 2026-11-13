@@ -5,7 +5,7 @@
 A desktop app on Tauri 2, React 19 and Chakra UI v3, with everything around it already set up:
 a pnpm workspace with one version of each shared dependency, oxlint and oxfmt, Storybook for
 every package with each story run as a test in headless Chromium, CI, signed releases that the
-app updates itself from, a prerendered marketing site with a download page, generated
+app updates itself from, an Astro marketing site with a download page, generated
 screenshots, and instructions and skills for coding agents.
 
 The app it comes with is a small example that shows each part working: type names, one a line,
@@ -50,7 +50,8 @@ The front end reaches the core through two files, `apps/desktop/src/api.ts` and
   Claude Code, Cursor and VS Code, and skills for Chakra, code review, screenshots and releases.
 - **Releases**: push a `v*` tag and `release.yml` builds Windows, macOS and Linux installers into
   a draft release with a signed update manifest; publishing it updates every installed copy.
-- **The site**: Vite, TanStack Router and static prerendering, served by a Cloudflare Worker that
+- **The site**: Astro, every page built to static HTML with the shared Chakra components, served
+  by a Cloudflare Worker that
   also answers `/api/*` routes of your own, with a download page that sorts the latest release's
   files by system, a real 404 page, and a preview of every pull request.
 

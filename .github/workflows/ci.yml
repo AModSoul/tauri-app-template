@@ -80,7 +80,8 @@ jobs:
       - run: pnpm --filter desktop exec playwright install --with-deps chromium
       - run: pnpm test
 
-      # The site's prerender fetches the latest release; the token raises GitHub's rate limit.
+      # The site's download page fetches the latest release as it's built; the token raises
+      # GitHub's rate limit.
       - run: pnpm build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

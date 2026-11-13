@@ -9,7 +9,6 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { createFileRoute, Link as RouterLink } from "@tanstack/react-router";
 import type { IconType } from "react-icons";
 import { LuDownload, LuLaptop, LuSettings2, LuShieldCheck, LuTerminal } from "react-icons/lu";
 
@@ -19,10 +18,6 @@ import { ScrollArea } from "@my-app/ui/scroll-area";
 
 import { Screenshot } from "@/components/Screenshot";
 import { APP_NAME, GITHUB_REPO_URL } from "@/site-config";
-
-export const Route = createFileRoute("/")({
-  component: Home,
-});
 
 // The template's example app. Say what the real app does here.
 const FEATURES: { icon: IconType; title: string; body: string }[] = [
@@ -43,7 +38,8 @@ const FEATURES: { icon: IconType; title: string; body: string }[] = [
   },
 ];
 
-function Home() {
+/** The home page's content, rendered to HTML when the site is built, with no JavaScript. */
+export function Home() {
   return (
     <>
       <Container maxW="6xl" pt={{ base: 12, md: 20 }} pb={{ base: 10, md: 16 }}>
@@ -56,10 +52,8 @@ function Home() {
             system accepts. A desktop app for Windows, macOS and Linux, and a command line tool.
           </Text>
           <HStack gap={3} wrap="wrap" justify="center">
-            <LinkButton asChild size="lg">
-              <RouterLink to="/download">
-                <LuDownload /> Download
-              </RouterLink>
+            <LinkButton href="/download" size="lg">
+              <LuDownload /> Download
             </LinkButton>
             <LinkButton
               href={GITHUB_REPO_URL}

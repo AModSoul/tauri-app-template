@@ -1,21 +1,9 @@
+import { fileURLToPath, URL } from "node:url";
+
 import type { StorybookConfig } from "@storybook/react-vite";
-import type { PluginOption } from "vite";
 
-/** Plugins that only make sense for the site's own build. */
-const SITE_BUILD_PLUGINS = new Set([
-  "vite-prerender-plugin",
-  "serve-prerendered-html",
-  "drop-prerender-chunks",
-  "exit-after-build",
-]);
-
-function withoutSiteBuildPlugins(plugins: PluginOption[] | undefined): PluginOption[] {
-  return (plugins ?? []).flat(Infinity).filter((plugin) => {
-    if (!plugin || typeof plugin !== "object" || !("name" in plugin)) return true;
-    return !SITE_BUILD_PLUGINS.has(plugin.name);
-  });
-}
-
+// The site's React components. Its pages are Astro's (`src/pages`), which Storybook can't show;
+// what they're made of is here.
 const config: StorybookConfig = {
   stories: ["../src/**/*.stories.@(ts|tsx)"],
   addons: [
@@ -41,7 +29,10 @@ const config: StorybookConfig = {
   },
   viteFinal: (viteConfig) => ({
     ...viteConfig,
-    plugins: withoutSiteBuildPlugins(viteConfig.plugins),
+    resolve: {
+      ...viteConfig.resolve,
+      alias: { "@": fileURLToPath(new URL("../src", import.meta.url)) },
+    },
   }),
 };
 export default config;

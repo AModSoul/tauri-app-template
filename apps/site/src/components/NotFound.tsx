@@ -1,10 +1,9 @@
 import { Container, Heading, Stack, Text } from "@chakra-ui/react";
-import { Link as RouterLink } from "@tanstack/react-router";
 
 import { LinkButton } from "@my-app/ui/link-button";
 
-/** Any address the site has no page for. Prerendered as `404.html`, which the Worker serves
- * for every such address, with a 404 status. */
+/** Any address the site has no page for: `src/pages/404.astro`, built as `404.html`, which the
+ * Worker serves for every such address, with a 404 status. */
 export function NotFound() {
   return (
     <Container maxW="3xl" py={{ base: 16, md: 24 }}>
@@ -15,9 +14,7 @@ export function NotFound() {
         <Text color="fg.muted" fontSize="lg">
           There's nothing at this address. It may have moved, or the link may be wrong.
         </Text>
-        <LinkButton asChild>
-          <RouterLink to="/">Go to the home page</RouterLink>
-        </LinkButton>
+        <LinkButton href="/">Go to the home page</LinkButton>
       </Stack>
     </Container>
   );

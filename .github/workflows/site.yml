@@ -54,8 +54,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # The prerender fetches the latest release; the token raises GitHub's rate limit. The
-      # build typechecks the Worker too.
+      # The download page fetches the latest release as it's built; the token raises GitHub's rate
+      # limit. The build typechecks the pages and the Worker too.
       - run: pnpm --filter site build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,4 +1,4 @@
-// The site's Worker. Cloudflare serves the prerendered pages in `dist` by itself; requests for
+// The site's Worker. Cloudflare serves the pages Astro built in `dist` by itself; requests for
 // the paths in wrangler.jsonc's `run_worker_first` (`/api/*`) come here first. Add a route to
 // `ROUTES`, and anything else that reaches the Worker is handed to the static assets.
 //

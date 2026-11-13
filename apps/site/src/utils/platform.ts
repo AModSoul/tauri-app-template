@@ -1,6 +1,6 @@
 /**
  * Best-effort detection of the visitor's system and processor, to pick the download to recommend.
- * Takes a navigator-like object so it stays testable and never reads globals during prerender.
+ * Takes a navigator-like object so it stays testable and never reads globals while the site is built.
  */
 
 import type { Arch, Os } from "@/downloads/artifacts";

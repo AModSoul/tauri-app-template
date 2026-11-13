@@ -1,6 +1,6 @@
 /**
  * The latest published release of the app, from GitHub's REST API. The API allows cross-origin
- * requests, so the browser asks it directly; the prerender asks it at build time.
+ * requests, so the browser asks it directly; the download page asks it as the site is built.
  */
 
 import { GITHUB_OWNER, GITHUB_REPO } from "@/site-config";

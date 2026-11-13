@@ -1,17 +1,19 @@
 import { Container, Heading, Stack, Text } from "@chakra-ui/react";
-import { createFileRoute } from "@tanstack/react-router";
 
 import { DownloadPanel } from "@/components/DownloadPanel";
+import type { Release } from "@/downloads/github";
 import { useLatestRelease, useVisitorPlatform } from "@/downloads/hooks";
-import { APP_NAME } from "@/site-config";
 
-export const Route = createFileRoute("/download")({
-  component: Download,
-  head: () => ({ meta: [{ title: `Download · ${APP_NAME}` }] }),
-});
+export interface DownloadsProps {
+  /** The latest release when the site was built, if GitHub answered: shown at once, before the
+   * page asks GitHub again. */
+  built?: Release | null;
+}
 
-function Download() {
-  const state = useLatestRelease();
+/** The download page's content. An island: it asks GitHub for the latest release, and the
+ * browser what system it's on. */
+export function Downloads({ built = null }: DownloadsProps) {
+  const state = useLatestRelease(built);
   const { os, arch } = useVisitorPlatform();
 
   return (
