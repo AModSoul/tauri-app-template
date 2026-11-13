@@ -50,9 +50,9 @@ The front end reaches the core through two files, `apps/desktop/src/api.ts` and
   Claude Code, Cursor and VS Code, and skills for Chakra, code review, screenshots and releases.
 - **Releases**: push a `v*` tag and `release.yml` builds Windows, macOS and Linux installers into
   a draft release with a signed update manifest; publishing it updates every installed copy.
-- **The site**: Vite, TanStack Router and static prerendering, deployed to Cloudflare Pages, with
-  a download page that sorts the latest release's files by system, and previews for pull
-  requests.
+- **The site**: Vite, TanStack Router and static prerendering, served by a Cloudflare Worker that
+  also answers `/api/*` routes of your own, with a download page that sorts the latest release's
+  files by system, a real 404 page, and a preview of every pull request.
 
 The rest of this README is the example app's, as a new project starts with it.
 

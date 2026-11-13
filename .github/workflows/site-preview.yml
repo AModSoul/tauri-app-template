@@ -1,6 +1,8 @@
-# Deploys a pull request's site to a Cloudflare Pages preview, so a change to it can be seen
-# before it's merged, and links the preview from the run's summary. Only for pull requests from
-# this repository: a fork's has no access to the secrets.
+# Uploads a pull request's site, with its Worker, as a preview version of the Worker, so a change
+# to it can be seen before it's merged, and links the preview from the run's summary. The live
+# site isn't touched: a version only goes live when it's deployed. Only for pull requests from
+# this repository, since a fork's has no access to the secrets, and only once the Worker exists
+# (after the first deploy from trunk).
 name: Site preview
 
 on:
@@ -21,11 +23,10 @@ permissions:
 
 env:
   HUSKY: 0
-  PROJECT: my-app-site
 
 jobs:
   preview:
-    name: Build and deploy a preview
+    name: Build and upload a preview
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
@@ -44,35 +45,49 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Deploy the preview
-        id: deploy
+      - name: Upload the preview
+        id: upload
         working-directory: apps/site
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           BRANCH: ${{ github.head_ref || github.ref_name }}
+          # Wrangler adds one ND-JSON record per command to this file; the "version-upload"
+          # record has the preview's addresses.
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.json
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
             echo "::notice::No CLOUDFLARE_API_TOKEN secret, so there's no preview."
             exit 0
           fi
-          # Pages names a preview after its branch, lower case, other characters as dashes.
-          alias=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-28)
-          pnpm exec wrangler pages deploy dist --project-name "$PROJECT" --branch "$alias" \
-            --commit-hash "$(git rev-parse HEAD)" | tee deploy.log
-          url=$(grep -oE 'https://[a-z0-9.-]+\.pages\.dev' deploy.log | tail -1)
-          echo "url=$url" >> "$GITHUB_OUTPUT"
-          echo "alias=https://$alias.$PROJECT.pages.dev" >> "$GITHUB_OUTPUT"
+          # A preview alias is lower case letters, digits and dashes.
+          alias=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-32)
+          pnpm exec wrangler versions upload --preview-alias "$alias" \
+            --message "$(git log -1 --format='%h %s')"
+          node -e '
+            const fs = require("node:fs");
+            const record = fs
+              .readFileSync(process.env.WRANGLER_OUTPUT_FILE_PATH, "utf8")
+              .split("\n")
+              .filter(Boolean)
+              .map((line) => JSON.parse(line))
+              .findLast((entry) => entry.type === "version-upload");
+            if (!record) throw new Error("wrangler wrote no version-upload record");
+            fs.appendFileSync(
+              process.env.GITHUB_OUTPUT,
+              `url=${record.preview_url ?? ""}\nalias=${record.preview_alias_url ?? ""}\n`,
+            );
+          '
 
       - name: Write summary
-        if: steps.deploy.outputs.url != ''
+        if: steps.upload.outputs.url != '' || steps.upload.outputs.alias != ''
         env:
-          URL: ${{ steps.deploy.outputs.url }}
-          ALIAS: ${{ steps.deploy.outputs.alias }}
+          URL: ${{ steps.upload.outputs.url }}
+          ALIAS: ${{ steps.upload.outputs.alias }}
         run: |
           {
             echo "### Site preview"
             echo
-            echo "- This build: $URL"
+            echo "- This version: $URL"
             echo "- The branch's latest: $ALIAS"
           } >> "$GITHUB_STEP_SUMMARY"

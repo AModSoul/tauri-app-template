@@ -85,7 +85,10 @@ export async function prerender({ url }: PrerenderArguments): Promise<PrerenderR
     links,
     head: {
       lang: "en",
-      title: documentTitleFromMatches(router.state.matches) ?? APP_NAME,
+      title:
+        url === "/404.html"
+          ? `Page not found · ${APP_NAME}`
+          : (documentTitleFromMatches(router.state.matches) ?? APP_NAME),
       elements,
     },
   };

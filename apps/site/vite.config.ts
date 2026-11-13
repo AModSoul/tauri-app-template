@@ -12,6 +12,7 @@ import { vitePrerenderPlugin } from "vite-prerender-plugin";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const PRERENDER_SCRIPT = path.join(dirname, "src/prerender.tsx");
+const NOT_FOUND_PAGE = "/404.html";
 
 /**
  * The directory of `pkg`'s `package.json`, resolved from `from`'s. pnpm only links a package's
@@ -144,6 +145,8 @@ export default defineConfig(({ command }) => ({
           ...vitePrerenderPlugin({
             renderTarget: "#root",
             prerenderScript: PRERENDER_SCRIPT,
+            // The page the Worker serves for any address with none (`not_found_handling`).
+            additionalPrerenderRoutes: [NOT_FOUND_PAGE],
           }),
           dropPrerenderChunks(),
           preloadInter(),
@@ -158,7 +161,11 @@ export default defineConfig(({ command }) => ({
     projects: [
       {
         extends: true,
-        test: { name: "unit", environment: "node", include: ["src/**/*.test.ts"] },
+        test: {
+          name: "unit",
+          environment: "node",
+          include: ["src/**/*.test.ts", "worker/**/*.test.ts"],
+        },
       },
       {
         // Every story is a test: it must render, its play function must pass,

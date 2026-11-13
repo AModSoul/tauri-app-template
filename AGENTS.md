@@ -50,9 +50,14 @@ drive it.<!-- site:start --> A marketing site sits beside them.<!-- site:end -->
   preview every app uses. Source only, no build step: import `@my-app/ui/<snippet>`,
   `@my-app/ui/theme`.
   <!-- site:start -->
-- `apps/site` (package `site`): the marketing site, on Cloudflare Pages: Vite, TanStack Router,
-  and `vite-prerender-plugin`, which renders every page to static HTML after the build. Where
-  it lives and links to is all in `src/site-config.ts`.
+- `apps/site` (package `site`): the marketing site, on Cloudflare Workers: Vite, TanStack
+  Router, and `vite-prerender-plugin`, which renders every page to static HTML after the build,
+  `404.html` included. Where it lives and links to is all in `src/site-config.ts`.
+  - `wrangler.jsonc`: the Worker. It serves `dist` as static assets, and runs
+    `worker/index.ts` first only for the paths in `run_worker_first` (`/api/*`).
+  - `worker/`: the Worker's code, on Cloudflare's runtime (no DOM, no Node), with its own
+    tsconfig. Its `Env` and runtime types come from `wrangler types` into
+    `worker-configuration.d.ts`, which is generated, not committed.
   <!-- site:end -->
 - `docs/plan.md`: what's being built, the decisions made, and where the work stands. Its
   Progress section is the handoff between sessions.
@@ -84,9 +89,12 @@ drive it.<!-- site:start --> A marketing site sits beside them.<!-- site:end -->
 <!-- core:rust:end -->
 <!-- site:start -->
 
-| Task | Command                                                               |
-| ---- | --------------------------------------------------------------------- |
-| Site | `pnpm site-dev` (port 3000); `pnpm --filter site build` prerenders it |
+| Task                 | Command                                                            |
+| -------------------- | ------------------------------------------------------------------ |
+| Site                 | `pnpm site-dev` (port 3000, no Worker); `pnpm --filter site build` |
+| Site with its Worker | `pnpm --filter site preview` (builds, then `wrangler dev` on 3000) |
+| The Worker's types   | `pnpm --filter site cf-typegen` (after changing `wrangler.jsonc`)  |
+| A Worker secret      | `pnpm --filter site exec wrangler secret put <NAME>`               |
 
 <!-- site:end -->
 
@@ -163,6 +171,11 @@ The Tauri crate embeds `apps/desktop/dist`, so `pnpm --filter desktop build` onc
   knows are listed as "Other files", so a new kind of file shows up on its own; to give it a
   label and a place on its system's tab, add a rule there and a case to `artifacts.test.ts`.
   Never hard-code an asset name or version in a component.
+- **The site's Worker runs only where it must.** Static pages are served without it; a route
+  that needs code goes in `ROUTES` in `apps/site/worker/index.ts` under a path that
+  `run_worker_first` sends to it, with a test in `worker/index.test.ts`. Bindings and variables
+  go in `wrangler.jsonc`, secrets through `wrangler secret put`, never in the repo; run
+  `cf-typegen` after either so `Env` knows them.
 - **The site never creates a GitHub release or a `v*` tag.** The app's updater and the download
   page read `releases/latest`, which must always be the app's. The site deploys from `trunk` on
   its own (`.github/workflows/site.yml`); the app ships by tag (`release.yml`, the `release`

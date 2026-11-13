@@ -1,0 +1,10 @@
+{
+  // The Worker runs on Cloudflare's runtime, not in a browser: no DOM, and the runtime's own
+  // types from worker-configuration.d.ts (`pnpm --filter site cf-typegen`).
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "types": ["../worker-configuration.d.ts"]
+  },
+  "include": ["."]
+}

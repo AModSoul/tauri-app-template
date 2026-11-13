@@ -5,6 +5,7 @@ import { useLayoutEffect } from "react";
 
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { NotFound } from "@/components/NotFound";
 import { documentTitleFromMatches } from "@/document-title";
 import { APP_NAME, DESCRIPTION, SITE_URL } from "@/site-config";
 
@@ -12,6 +13,7 @@ const IMAGE = `${SITE_URL}icon-512.png`;
 
 export const Route = createRootRoute({
   component: RootLayout,
+  notFoundComponent: NotFound,
   head: () => ({
     meta: [
       { title: APP_NAME },

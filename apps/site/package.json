@@ -6,14 +6,16 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm --filter @my-app/ui typegen && vite dev --port 3000",
-    "build": "pnpm --filter @my-app/ui typegen && vite build && tsc --noEmit",
-    "preview": "vite preview --port 3000",
-    "typecheck": "pnpm --filter @my-app/ui typegen && tsc --noEmit",
+    "build": "pnpm --filter @my-app/ui typegen && vite build && pnpm run typecheck:worker && tsc --noEmit",
+    "preview": "pnpm run build && wrangler dev --port 3000",
+    "typecheck": "pnpm --filter @my-app/ui typegen && tsc --noEmit && pnpm run typecheck:worker",
+    "typecheck:worker": "wrangler types && tsc --noEmit -p worker",
+    "cf-typegen": "wrangler types",
     "test": "vitest run",
     "storybook": "storybook dev -p 6010",
     "ci-storybook": "storybook dev -p 6010 --quiet --ci",
     "build-storybook": "storybook build",
-    "deploy": "wrangler pages deploy dist --project-name my-app-site"
+    "deploy": "pnpm run build && wrangler deploy"
   },
   "dependencies": {
     "@chakra-ui/react": "catalog:",

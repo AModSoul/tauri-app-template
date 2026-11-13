@@ -1,0 +1,26 @@
+// The site on Cloudflare Workers: the prerendered pages in `dist` as static assets, and
+// `worker/index.ts` in front of the paths in `run_worker_first`. `pnpm --filter site preview`
+// runs both locally; `.github/workflows/site.yml` deploys them.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "my-app-site",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-06-11",
+  "observability": { "enabled": true },
+  "assets": {
+    "directory": "dist",
+    "binding": "ASSETS",
+    // The site's links have no trailing slash (`/download`), so its pages are served without one.
+    "html_handling": "drop-trailing-slash",
+    // Every page is prerendered, so an address with none gets dist/404.html, as a 404.
+    "not_found_handling": "404-page",
+    // Only these reach the Worker first; everything else is served straight from `dist`.
+    "run_worker_first": ["/api/*"],
+  },
+  // The site's own domain, once it has one (it must be on the Cloudflare account):
+  // "routes": [{ "pattern": "example.com", "custom_domain": true }],
+  //
+  // Bindings the Worker needs go here (KV, D1, R2, variables). Secrets are set with
+  // `pnpm --filter site exec wrangler secret put <NAME>`, never written here. After changing
+  // either, `pnpm --filter site cf-typegen` updates the `Env` type.
+}

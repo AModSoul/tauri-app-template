@@ -10,7 +10,7 @@
 //   --identifier dev.me.card-forge the bundle identifier, and the settings folder's name
 //   --owner me                     the GitHub user or organisation
 //   --repo card-forge              the GitHub repository
-//   --site-url https://...         where the marketing site will live
+//   --site-url https://...         the marketing site's own domain, if it has one yet
 //   --core rust | ts               where the logic lives (see the README)
 //   --no-site                      leave out the marketing site
 //
@@ -90,7 +90,11 @@ const keepSite = flags["no-site"]
   ? false
   : (await ask(undefined, "Keep the marketing site? y/n", "y")).toLowerCase().startsWith("y");
 const siteUrl = keepSite
-  ? await ask(flags["site-url"], "Site URL", `https://${slug}-site.pages.dev/`)
+  ? await ask(
+      flags["site-url"],
+      "Site URL (its own domain, if it has one yet)",
+      "https://example.com/",
+    )
   : "https://example.com/";
 prompt?.close();
 
@@ -233,6 +237,17 @@ for (const file of files(root)) {
   if (after !== before) writeFileSync(file, after);
 }
 
+// A domain of its own serves the site's Worker. It must be on the Cloudflare account.
+const wranglerConfig = at("apps/site/wrangler.jsonc");
+if (keepSite && siteUrl !== "https://example.com/" && existsSync(wranglerConfig)) {
+  const host = new URL(siteUrl).hostname;
+  const config = readFileSync(wranglerConfig, "utf8").replace(
+    /\/\/ ("routes": \[\{ "pattern": )"example\.com"/u,
+    `$1"${host}"`,
+  );
+  writeFileSync(wranglerConfig, config);
+}
+
 // --- The template's own parts go --------------------------------------------------
 
 editJson("package.json", (json) => {
@@ -269,8 +284,10 @@ ${name} is set up. What's left is yours to do:
      TAURI_SIGNING_PRIVATE_KEY and TAURI_SIGNING_PRIVATE_KEY_PASSWORD.${
        keepSite
          ? `
-  3. For the site: the secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID. The first deploy
-     creates the Pages project ${slug}-site.`
+  3. For the site: the secrets CLOUDFLARE_API_TOKEN (from the "Edit Cloudflare Workers"
+     template) and CLOUDFLARE_ACCOUNT_ID. The first deploy from trunk creates the Worker
+     ${slug}-site, at ${slug}-site.<your subdomain>.workers.dev. For a domain of its own, add it
+     to "routes" in apps/site/wrangler.jsonc and set SITE_URL in apps/site/src/site-config.ts.`
          : ""
      }
   ${keepSite ? 4 : 3}. Say what the app is in README.md and AGENTS.md, and start docs/plan.md.
