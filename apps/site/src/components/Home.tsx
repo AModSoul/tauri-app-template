@@ -18,6 +18,7 @@ import { ScrollArea } from "@my-app/ui/scroll-area";
 
 import { Screenshot } from "@/components/Screenshot";
 import { APP_NAME, GITHUB_REPO_URL } from "@/site-config";
+import { link } from "@/links";
 
 // The template's example app. Say what the real app does here.
 const FEATURES: { icon: IconType; title: string; body: string }[] = [
@@ -52,7 +53,7 @@ export function Home() {
             system accepts. A desktop app for Windows, macOS and Linux, and a command line tool.
           </Text>
           <HStack gap={3} wrap="wrap" justify="center">
-            <LinkButton href="/download" size="lg">
+            <LinkButton href={link("/download")} size="lg">
               <LuDownload /> Download
             </LinkButton>
             <LinkButton

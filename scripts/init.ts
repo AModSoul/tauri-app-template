@@ -254,6 +254,8 @@ editJson("package.json", (json) => {
   delete json.scripts["template:init"];
 });
 rmSync(at("template"), { recursive: true, force: true });
+// The template's demo of its site on GitHub Pages; a project's site deploys to Cloudflare.
+rmSync(at(".github/workflows/pages.yml"), { force: true });
 rmSync(at("scripts/init.ts"));
 
 // --- Reinstall, so the lockfiles and generated files follow ---------------------

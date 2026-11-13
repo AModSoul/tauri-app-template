@@ -4,6 +4,7 @@ import { LuGithub } from "react-icons/lu";
 import { ColorModeButton } from "@my-app/ui/color-mode";
 
 import { APP_NAME, GITHUB_REPO_URL, PAGES, type SitePath } from "@/site-config";
+import { link } from "@/links";
 
 export interface HeaderProps {
   /** The page it's on, which the navigation marks. */
@@ -25,9 +26,9 @@ export function Header({ current }: HeaderProps) {
     >
       <Container maxW="6xl" py={3}>
         <HStack justify="space-between" gap={4}>
-          <Link href="/" fontWeight="semibold" color="fg" textDecoration="none" gap={2}>
+          <Link href={link("/")} fontWeight="semibold" color="fg" textDecoration="none" gap={2}>
             {/* The app's icon at 256px, sharp at this size on any screen. */}
-            <Image src="/apple-touch-icon.png" alt="" boxSize={7} />
+            <Image src={link("/apple-touch-icon.png")} alt="" boxSize={7} />
             <Box as="span" display={{ base: "none", sm: "inline" }}>
               {APP_NAME}
             </Box>
@@ -37,7 +38,7 @@ export function Header({ current }: HeaderProps) {
             {PAGES.map(({ path, label }) => (
               <Link
                 key={path}
-                href={path}
+                href={link(path)}
                 aria-current={path === current ? "page" : undefined}
                 color="fg.muted"
                 _hover={{ color: "fg" }}

@@ -1,0 +1,69 @@
+# The template's own demo: builds the example site (apps/site) and publishes it on this
+# repository's GitHub Pages, so the template shows what it makes. Only static files: the site's
+# Worker (`/api/*`) doesn't run there. `pnpm template:init` deletes this workflow; a project's
+# site deploys to Cloudflare (site.yml).
+name: Pages
+
+on:
+  push:
+    branches: [trunk]
+    paths:
+      - apps/site/**
+      - packages/ui/**
+      - docs/screenshots/**
+      - pnpm-lock.yaml
+      - .github/workflows/pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  HUSKY: 0
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # The Pages site's address and the folder it's served from (/<repository>).
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm --filter site build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          SITE_BASE: ${{ steps.pages.outputs.base_path }}
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: apps/site/dist
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -2,7 +2,8 @@
 // Every page's frame: its <head> (title, description, social cards, icons) and the header and
 // footer around its content.
 import { Footer, Header } from "@/islands";
-import { APP_NAME, DESCRIPTION, SITE_URL, type SitePath } from "@/site-config";
+import { link } from "@/links";
+import { APP_NAME, DESCRIPTION, type SitePath } from "@/site-config";
 
 interface Props {
   /** The page's own title, before the site's name; the site's name alone when there's none. */
@@ -10,12 +11,14 @@ interface Props {
   description?: string;
   /** The page, for the navigation to mark. */
   current?: SitePath;
+  /** Whether search engines should list the page at its address: not the 404 page's. */
+  indexed?: boolean;
 }
 
-const { title, description = DESCRIPTION, current } = Astro.props;
+const { title, description = DESCRIPTION, current, indexed = true } = Astro.props;
 const fullTitle = title ? `${title} · ${APP_NAME}` : APP_NAME;
-const canonical = new URL(Astro.url.pathname, SITE_URL).href;
-const image = new URL("icon-512.png", SITE_URL).href;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const image = new URL(link("/icon-512.png"), Astro.site).href;
 ---
 
 <!doctype html>
@@ -25,10 +28,10 @@ const image = new URL("icon-512.png", SITE_URL).href;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    {indexed ? <link rel="canonical" href={canonical} /> : <meta name="robots" content="noindex" />}
+    <link rel="icon" type="image/png" sizes="32x32" href={link("/favicon-32x32.png")} />
+    <link rel="apple-touch-icon" href={link("/apple-touch-icon.png")} />
+    <link rel="sitemap" href={link("/sitemap-index.xml")} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={APP_NAME} />
     <meta property="og:title" content={fullTitle} />

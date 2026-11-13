@@ -8,6 +8,9 @@ every package with each story run as a test in headless Chromium, CI, signed rel
 app updates itself from, an Astro marketing site with a download page, generated
 screenshots, and instructions and skills for coding agents.
 
+**See the example site:** <https://amodsoul.github.io/tauri-app-template/>, built from
+`apps/site` by `.github/workflows/pages.yml` (static pages only: the Worker doesn't run there).
+
 The app it comes with is a small example that shows each part working: type names, one a line,
 and it makes each a safe file name, reporting its progress job by job, with settings in a drawer.
 Replace it with your own and keep the plumbing.
