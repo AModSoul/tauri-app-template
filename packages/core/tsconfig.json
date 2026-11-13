@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // No DOM: the core runs in the app's window, in tests and in scripts alike. Node's types
+    // give it what browsers and Node share, such as AbortSignal and setTimeout; it imports
+    // nothing from Node itself.
+    "lib": ["ES2023"],
+    "types": ["node"]
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,125 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "jsx-a11y", "import", "unicorn", "oxc", "vitest"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "import/no-unassigned-import": [
+      "warn",
+      {
+        "allow": ["**/*.css"]
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "@chakra-ui/react",
+            "importNames": [
+              "Accordion",
+              "ActionBar",
+              "Alert",
+              "Avatar",
+              "Blockquote",
+              "Breadcrumb",
+              "Card",
+              "Carousel",
+              "Checkbox",
+              "CheckboxCard",
+              "Clipboard",
+              "CloseButton",
+              "ColorPicker",
+              "Combobox",
+              "DataList",
+              "Dialog",
+              "Drawer",
+              "EmptyState",
+              "Field",
+              "FileUpload",
+              "HoverCard",
+              "Menu",
+              "NativeSelect",
+              "NumberInput",
+              "Pagination",
+              "PinInput",
+              "Popover",
+              "Progress",
+              "ProgressCircle",
+              "QrCode",
+              "RadioCard",
+              "RadioGroup",
+              "RatingGroup",
+              "ScrollArea",
+              "SegmentGroup",
+              "Select",
+              "Skeleton",
+              "Slider",
+              "Splitter",
+              "Status",
+              "Steps",
+              "Switch",
+              "Tag",
+              "TagsInput",
+              "Timeline",
+              "Toaster",
+              "Toggle",
+              "Tooltip"
+            ],
+            "message": "Use the snippet from @my-app/ui instead (e.g. @my-app/ui/tooltip for Tooltip). If it is missing, add it with `npx @chakra-ui/cli snippet add <name> --tsx --outdir packages/ui/src/components/ui`."
+          },
+          {
+            "name": "@my-app/ui/dialog",
+            "message": "In the desktop app, import from @/components/ui/dialog, which keeps the app's header usable while a dialog is open."
+          },
+          {
+            "name": "@my-app/ui/drawer",
+            "message": "In the desktop app, import from @/components/ui/drawer, which keeps the app's header usable while a drawer is open."
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["packages/ui/src/components/ui/**"],
+      "rules": {
+        "eslint/no-shadow": "off",
+        "jsx-a11y/prefer-tag-over-role": "off",
+        "react/exhaustive-effect-dependencies": "off",
+        "react/immutability": "off",
+        "react/set-state-in-effect": "off",
+        "react-hooks/exhaustive-deps": "off",
+        "no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": ["apps/desktop/src/components/ui/**"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": ["packages/ui/src/**", "**/.storybook/**"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "**/dist",
+    "target",
+    "**/src-tauri",
+    "crates",
+    "apps/desktop/src/bindings",
+    "**/storybook-static",
+    "apps/site/src/routeTree.gen.ts"
+  ]
+}

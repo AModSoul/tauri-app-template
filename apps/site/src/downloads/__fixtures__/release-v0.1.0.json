@@ -1,0 +1,78 @@
+{
+  "tag_name": "v0.1.0",
+  "name": "My App v0.1.0",
+  "published_at": "2026-11-07T17:34:29Z",
+  "html_url": "https://github.com/your-github-user/my-app/releases/tag/v0.1.0",
+  "assets": [
+    {
+      "name": "latest.json",
+      "size": 7132,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/latest.json"
+    },
+    {
+      "name": "My.App-0.1.0-1.x86_64.rpm",
+      "size": 7192836,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App-0.1.0-1.x86_64.rpm"
+    },
+    {
+      "name": "My.App-0.1.0-1.x86_64.rpm.sig",
+      "size": 448,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App-0.1.0-1.x86_64.rpm.sig"
+    },
+    {
+      "name": "My.App_0.1.0_amd64.AppImage",
+      "size": 85244408,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App_0.1.0_amd64.AppImage"
+    },
+    {
+      "name": "My.App_0.1.0_amd64.AppImage.sig",
+      "size": 452,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App_0.1.0_amd64.AppImage.sig"
+    },
+    {
+      "name": "My.App_0.1.0_amd64.deb",
+      "size": 7186038,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App_0.1.0_amd64.deb"
+    },
+    {
+      "name": "My.App_0.1.0_amd64.deb.sig",
+      "size": 444,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App_0.1.0_amd64.deb.sig"
+    },
+    {
+      "name": "My.App_0.1.0_universal.dmg",
+      "size": 12136003,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App_0.1.0_universal.dmg"
+    },
+    {
+      "name": "My.App_0.1.0_x64-setup.exe",
+      "size": 5022225,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App_0.1.0_x64-setup.exe"
+    },
+    {
+      "name": "My.App_0.1.0_x64-setup.exe.sig",
+      "size": 452,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App_0.1.0_x64-setup.exe.sig"
+    },
+    {
+      "name": "My.App_0.1.0_x64_en-US.msi",
+      "size": 7094272,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App_0.1.0_x64_en-US.msi"
+    },
+    {
+      "name": "My.App_0.1.0_x64_en-US.msi.sig",
+      "size": 452,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App_0.1.0_x64_en-US.msi.sig"
+    },
+    {
+      "name": "My.App_universal.app.tar.gz",
+      "size": 12496585,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App_universal.app.tar.gz"
+    },
+    {
+      "name": "My.App_universal.app.tar.gz.sig",
+      "size": 440,
+      "browser_download_url": "https://github.com/your-github-user/my-app/releases/download/v0.1.0/My.App_universal.app.tar.gz.sig"
+    }
+  ]
+}

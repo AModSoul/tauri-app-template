@@ -1,0 +1,42 @@
+{
+  "name": "my-app-workspace",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "template:init": "node scripts/init.ts",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "tsc --noEmit && pnpm -r typecheck",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "tauri-dev": "pnpm --filter desktop tauri dev",
+    "site-dev": "pnpm --filter site dev",
+    "bindings": "cargo test -p my-app-core export_bindings && oxfmt apps/desktop/src/bindings",
+    "tauri:icons": "node scripts/icons.ts",
+    "storybook": "pnpm -r --parallel --no-bail storybook",
+    "ci-storybook": "pnpm -r --parallel --no-bail ci-storybook",
+    "prepare": "husky",
+    "agents:sync": "node scripts/sync-agents.ts",
+    "postinstall": "pnpm run agents:sync"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "oxfmt": "^0.73.0",
+    "oxlint": "^1.92.0",
+    "typescript": "catalog:"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}": [
+      "oxlint --fix --no-error-on-unmatched-pattern",
+      "oxfmt --no-error-on-unmatched-pattern"
+    ],
+    "*.{json,jsonc,md,mdx,css,yml,yaml,html,toml}": "oxfmt --no-error-on-unmatched-pattern",
+    "*.rs": "cargo fmt --"
+  },
+  "packageManager": "pnpm@12.18.0"
+}

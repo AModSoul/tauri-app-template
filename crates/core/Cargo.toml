@@ -1,0 +1,29 @@
+[package]
+name = "my-app-core"
+description = "Everything My App does: the desktop app and the command line tool are shells over it"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+dirs = "6"
+reqwest = { version = "0.12", default-features = false, features = [
+  "rustls-tls",
+  "json",
+  "charset",
+  "http2",
+] }
+serde.workspace = true
+serde_json.workspace = true
+thiserror = "2"
+tokio.workspace = true
+tokio-util.workspace = true
+ts-rs = "12"
+
+[dev-dependencies]
+futures = "0.3"
+tempfile = "3"
+tokio = { workspace = true, features = ["test-util"] }
+wiremock = "0.6"

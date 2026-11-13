@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "chakra-ui": {
+      "command": "npx",
+      "args": ["-y", "@chakra-ui/react-mcp"]
+    },
+    "storybook-ui": {
+      "type": "http",
+      "url": "http://localhost:6008/mcp"
+    },
+    "storybook-desktop": {
+      "type": "http",
+      "url": "http://localhost:6009/mcp"
+    },
+    "storybook-site": {
+      "type": "http",
+      "url": "http://localhost:6010/mcp"
+    }
+  }
+}

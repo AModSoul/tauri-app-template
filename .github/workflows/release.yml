@@ -1,0 +1,97 @@
+# Builds installers when a version tag is pushed, or when run by hand for one platform or all,
+# and attaches them, with the signed update manifest the in-app updater reads, to a draft release
+# named for the version in tauri.conf.json. Publishing the draft is what makes the update live.
+#
+# Needs two repository secrets, from `pnpm --filter desktop tauri signer generate`:
+# TAURI_SIGNING_PRIVATE_KEY and TAURI_SIGNING_PRIVATE_KEY_PASSWORD. The matching public key goes
+# in tauri.conf.json's `plugins.updater.pubkey`.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Which installers to build
+        type: choice
+        options: [all, windows, macos, linux]
+        default: all
+
+permissions:
+  contents: write
+
+env:
+  HUSKY: 0
+
+jobs:
+  plan:
+    name: Plan
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.pick.outputs.matrix }}
+    steps:
+      - id: pick
+        env:
+          # A tag push builds everything.
+          WANT: ${{ inputs.platform || 'all' }}
+        run: |
+          all='[
+            {"platform": "windows", "name": "Windows", "os": "windows-latest", "args": ""},
+            {"platform": "macos", "name": "macOS", "os": "macos-latest", "args": "--target universal-apple-darwin"},
+            {"platform": "linux", "name": "Linux", "os": "ubuntu-22.04", "args": ""}
+          ]'
+          echo "matrix=$(jq -c --arg want "$WANT" '[.[] | select($want == "all" or .platform == $want)]' <<< "$all")" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build (${{ matrix.name }})
+    needs: plan
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install the libraries Tauri builds against
+        if: matrix.platform == 'linux'
+        timeout-minutes: 10
+        run: |
+          echo 'Acquire::Retries "3";' | sudo tee /etc/apt/apt.conf.d/80-retries
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Signs the update bundles; the matching public key is in tauri.conf.json.
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          projectPath: apps/desktop
+          tauriScript: pnpm tauri
+          # tauri-action fills __VERSION__ in from tauri.conf.json, so a run by hand gets the same
+          # release as the version's tag would.
+          tagName: v__VERSION__
+          releaseName: My App v__VERSION__
+          releaseBody: See the assets below to download and install this version.
+          releaseDraft: true
+          prerelease: false
+          includeUpdaterJson: true
+          args: --config src-tauri/tauri.release.conf.json ${{ matrix.args }}
