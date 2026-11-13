@@ -1,4 +1,5 @@
 import { Button } from "@chakra-ui/react";
+import { isTauri } from "@tauri-apps/api/core";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { check, type Update } from "@tauri-apps/plugin-updater";
 import { useEffect, useState } from "react";
@@ -12,7 +13,8 @@ export function UpdateButton() {
   const [update, setUpdate] = useState<Update | null>(null);
 
   useEffect(() => {
-    if (!import.meta.env.PROD) return;
+    // Development builds don't check, and nor does the app in a browser, which installs nothing.
+    if (!import.meta.env.PROD || !isTauri()) return;
     let current = true;
     // Offline, or no release yet: say nothing.
     check().then(

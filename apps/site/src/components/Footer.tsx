@@ -1,10 +1,15 @@
 import { Box, Container, HStack, Link, Stack, Text } from "@chakra-ui/react";
 
-import { GITHUB_RELEASES_URL, GITHUB_REPO_URL } from "@/site-config";
+import { GITHUB_REPO_URL } from "@/site-config";
+// site:download:start
+import { GITHUB_RELEASES_URL } from "@/site-config";
+// site:download:end
 
 const LINKS = [
   { href: GITHUB_REPO_URL, label: "GitHub" },
+  // site:download:start
   { href: GITHUB_RELEASES_URL, label: "Releases" },
+  // site:download:end
 ];
 
 export function Footer() {

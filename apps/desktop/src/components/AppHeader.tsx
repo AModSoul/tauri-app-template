@@ -1,6 +1,6 @@
 import { Box, Heading, HStack, Image, VisuallyHidden } from "@chakra-ui/react";
 
-import appIcon from "../../src-tauri/icons/128x128.png";
+import appIcon from "@/assets/app-icon.png";
 
 import { APP_NAME } from "@/app-config";
 import { windowFrame } from "@/appWindow";

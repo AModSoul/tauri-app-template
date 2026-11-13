@@ -120,7 +120,7 @@
     "crates",
     "apps/desktop/src/bindings",
     "**/storybook-static",
-    "apps/site/worker-configuration.d.ts",
+    "**/worker-configuration.d.ts",
     "**/.wrangler",
     "apps/site/.astro"
   ]

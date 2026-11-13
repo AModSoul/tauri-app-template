@@ -57,11 +57,13 @@ const scenes = SCENES.filter((scene) => names.length === 0 || names.includes(sce
 // The app, with the stand-ins swapped in for the modules that reach Tauri.
 const swaps: Record<string, string> = {
   "@/api": path.join(here, "api.ts"),
+  // app:desktop:start
   "@/appWindow": path.join(here, "appWindow.ts"),
   "@tauri-apps/api/core": path.join(here, "tauri.ts"),
   "@tauri-apps/plugin-dialog": path.join(here, "tauri.ts"),
   "@tauri-apps/plugin-process": path.join(here, "tauri.ts"),
   "@tauri-apps/plugin-updater": path.join(here, "tauri.ts"),
+  // app:desktop:end
 };
 const harness: Plugin = {
   name: "screenshots",

@@ -1,0 +1,9 @@
+# Headers Cloudflare adds to every file of the app in a browser (Workers static assets read this
+# file from `dist`). The Content-Security-Policy is the web's counterpart of tauri.conf.json's
+# `csp`: keep the two in step, adding a service the app talks to in both. Chakra's styles are
+# written at runtime, hence `'unsafe-inline'` for styles.
+/*
+  Content-Security-Policy: default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

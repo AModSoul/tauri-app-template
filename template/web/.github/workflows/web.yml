@@ -1,0 +1,74 @@
+# Builds the app for the browser and deploys it, with its Worker, to Cloudflare Workers when it
+# changes on trunk, or by hand; a pull request from this repository gets a preview version
+# instead, which leaves the live app alone. The first deploy creates the Worker.
+#
+# Needs two repository secrets: CLOUDFLARE_API_TOKEN, a token from the "Edit Cloudflare Workers"
+# template, and CLOUDFLARE_ACCOUNT_ID. Without them it builds the app but doesn't deploy it.
+name: Web app
+
+on:
+  push:
+    branches: [trunk]
+    paths:
+      - apps/desktop/**
+      - packages/**
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - .github/workflows/web.yml
+  pull_request:
+    paths:
+      - apps/desktop/**
+      - packages/**
+      - .github/workflows/web.yml
+  workflow_dispatch:
+
+concurrency:
+  group: web-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  HUSKY: 0
+
+jobs:
+  deploy:
+    name: Build and deploy
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # The build typechecks the app and its Worker too.
+      - run: pnpm --filter desktop build
+
+      - name: Deploy, or upload a preview of a pull request
+        working-directory: apps/desktop
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+          MESSAGE: ${{ github.event.head_commit.message || github.event.pull_request.title || 'Deployed by hand' }}
+        run: |
+          note=$(printf '%s' "$MESSAGE" | head -n 1 | cut -c1-100)
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::notice::No CLOUDFLARE_API_TOKEN secret, so the app was built but not deployed."
+            exit 0
+          fi
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # A preview alias is lower case letters, digits and dashes.
+            alias=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-32)
+            pnpm exec wrangler versions upload --preview-alias "$alias" --message "$note"
+          else
+            pnpm exec wrangler deploy --message "$note"
+          fi

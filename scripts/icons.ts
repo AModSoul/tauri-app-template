@@ -20,10 +20,14 @@ execSync(`pnpm tauri icon "${source}" --output "${icons}"`, { cwd: desktop, stdi
 for (const dir of ["android", "ios"])
   rmSync(path.join(icons, dir), { recursive: true, force: true });
 
+// The app's own copies: the header's icon, and the favicon when it runs in a browser.
+copyFileSync(path.join(icons, "128x128.png"), path.join(desktop, "src/assets/app-icon.png"));
+copyFileSync(path.join(icons, "32x32.png"), path.join(desktop, "public/favicon-32x32.png"));
+
 const site = path.join(root, "apps/site/public");
 if (existsSync(site)) {
   copyFileSync(path.join(icons, "32x32.png"), path.join(site, "favicon-32x32.png"));
   copyFileSync(path.join(icons, "128x128@2x.png"), path.join(site, "apple-touch-icon.png"));
   copyFileSync(path.join(icons, "icon.png"), path.join(site, "icon-512.png"));
 }
-console.log("Icons written to apps/desktop/src-tauri/icons and apps/site/public.");
+console.log("Icons written to apps/desktop and apps/site.");

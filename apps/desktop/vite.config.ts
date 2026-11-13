@@ -38,7 +38,12 @@ export default defineConfig({
     projects: [
       {
         extends: true,
-        test: { name: "unit", environment: "node", include: ["src/**/*.test.ts"] },
+        test: {
+          name: "unit",
+          environment: "node",
+          // `worker/` is the app's Worker, when it runs in a browser too.
+          include: ["src/**/*.test.ts", "worker/**/*.test.ts"],
+        },
       },
       {
         // Every story is a test: it must render, its play function must pass,

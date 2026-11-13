@@ -12,7 +12,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   play: async ({ canvas }) => {
-    for (const name of ["GitHub", "Releases"]) {
+    const names = [
+      "GitHub",
+      // site:download:start
+      "Releases",
+      // site:download:end
+    ];
+    for (const name of names) {
       await expect(canvas.getByRole("link", { name })).toHaveAttribute("target", "_blank");
     }
   },

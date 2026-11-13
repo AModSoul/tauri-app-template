@@ -19,9 +19,11 @@ export const Default: Story = {
       "aria-current",
       "page",
     );
+    // site:download:start
     await expect(canvas.getByRole("link", { name: "Download" })).not.toHaveAttribute(
       "aria-current",
     );
+    // site:download:end
     await expect(canvas.getByRole("link", { name: "Source code on GitHub" })).toHaveAttribute(
       "href",
       "https://github.com/your-github-user/my-app",

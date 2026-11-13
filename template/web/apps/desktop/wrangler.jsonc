@@ -1,0 +1,24 @@
+// The app in a browser, on Cloudflare Workers: the app's build in `dist` as static assets, and
+// `worker/index.ts` in front of the paths in `run_worker_first`. `pnpm --filter desktop
+// preview:web` runs both locally; `.github/workflows/web.yml` deploys them.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "my-app",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-06-11",
+  "observability": { "enabled": true },
+  "assets": {
+    "directory": "dist",
+    "binding": "ASSETS",
+    // A single-page app: any address with no file gets index.html, and the app shows it.
+    "not_found_handling": "single-page-application",
+    // Only these reach the Worker first; everything else is served straight from `dist`.
+    "run_worker_first": ["/api/*"],
+  },
+  // The app's own domain, once it has one (it must be on the Cloudflare account):
+  // "routes": [{ "pattern": "app.example.com", "custom_domain": true }],
+  //
+  // Bindings the Worker needs go here (KV, D1, R2, variables). Secrets are set with
+  // `wrangler secret put <NAME>`, never written here. After changing either,
+  // `pnpm --filter desktop cf-typegen` updates the `Env` type.
+}

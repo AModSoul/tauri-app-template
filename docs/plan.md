@@ -28,6 +28,18 @@ from this plan, and why. -->
 ## How the work is done
 
 - One step at a time, each ending with **Progress** brought up to date.
-- Before calling a step done: `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm test`,
-  `pnpm build`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace`,
-  a look at the app (`pnpm tauri-dev`), and the screenshots retaken if what they show changed.
+- Before calling a step done:
+  - `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm test` and `pnpm build`.
+  <!-- app:desktop:start -->
+  - `cargo clippy --workspace --all-targets -- -D warnings` and `cargo test --workspace`.
+  - A look at the app (`pnpm tauri-dev`).
+  <!-- app:desktop:end -->
+  <!-- app:web:start -->
+  - A look at the app in a browser (`pnpm --filter desktop preview:web`).
+  <!-- app:web:end -->
+  <!-- site:start -->
+  - A look at the site with its Worker (`pnpm --filter site preview`).
+  <!-- site:end -->
+  <!-- app:start -->
+  - The screenshots retaken if what they show changed.
+  <!-- app:end -->
